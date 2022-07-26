@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.calender.dtos.CustomAPIResponse;
@@ -20,7 +21,8 @@ import com.calender.exceptions.SlotReservationException;
 import com.calender.services.EventService;
 import com.calender.validators.EventValidator;
 
-@RestController("/events")
+@RestController
+@RequestMapping("/api/events")
 public class EventController {
 
 	@Autowired
@@ -57,18 +59,8 @@ public class EventController {
 	}
 	
 	@PostMapping("/all")
-	public List<EventDto> addEvent(@RequestBody List<EventDto> eventsDto) {
+	public List<EventDto> addUser(@RequestBody List<EventDto> eventsDto) {
 
-		for(EventDto event:eventsDto) {
-			if(EventValidator.validateEvents(event)) {
-				throw new SlotReservationException();
-				
-			}
-		}
-		EventDto dto = EventValidator.validateDuplicateEvents(eventsDto);
-		if(null != dto) {
-			
-		}
 		List<EventDto> responseList = new ArrayList<EventDto>();
 		List<Event> events = new ArrayList<Event>();
 		mapper.map(events,eventsDto);

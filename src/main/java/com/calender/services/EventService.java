@@ -20,7 +20,7 @@ public class EventService  {
 
 	
 	public List<Event> getAllEventsForUser(long id) {
-		return eventRepository.findAllByUserId(id);
+		return eventRepository.findAllByInterviewerId(id);
 	}
 	
 	public Event addEvent(Event event) {

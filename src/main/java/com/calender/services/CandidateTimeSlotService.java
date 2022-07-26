@@ -5,11 +5,12 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.calender.entities.CandidateTimeSlot;
 import com.calender.repositories.CandidateTimeSlotRepository;
 import com.calender.utils.CandidateUtils;
-
+@Service
 public class CandidateTimeSlotService {
 	@Autowired
 	private CandidateTimeSlotRepository calenderRepository;

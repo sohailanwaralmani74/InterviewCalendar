@@ -22,7 +22,7 @@ import com.calender.services.InterviewerTimeSlotService;
 import com.calender.validators.UserValidator;
 
 @RestController
-@RequestMapping("/slot")
+@RequestMapping("/api/interviewerSlot")
 public class InterviewerTimeSlotController {
 	@Autowired
 	private InterviewerTimeSlotService timeSlotService;

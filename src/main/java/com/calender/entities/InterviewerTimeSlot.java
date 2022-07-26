@@ -3,6 +3,7 @@ package com.calender.entities;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,6 +12,7 @@ import javax.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
+@Entity
 public class InterviewerTimeSlot {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

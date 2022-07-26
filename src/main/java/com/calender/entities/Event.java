@@ -1,14 +1,15 @@
 package com.calender.entities;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-import com.calender.dtos.CandidateTimeSlotDto;
 import lombok.Data;
 
 @Data
+@Entity
 public class Event {
 
 	@Id
@@ -17,6 +18,6 @@ public class Event {
 	@ManyToOne
 	private InterviewerTimeSlot interviewer;
 	@ManyToOne
-	private CandidateTimeSlotDto candidate;
+	private CandidateTimeSlot candidate;
 	private boolean active;
 }

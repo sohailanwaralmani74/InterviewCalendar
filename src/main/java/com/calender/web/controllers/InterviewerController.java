@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.calender.dtos.InterviewerDto;
@@ -18,7 +19,8 @@ import com.calender.dtos.CustomAPIResponse;
 import com.calender.entities.Interviewer;
 import com.calender.services.InterviewerService;
 
-@RestController("/interviewer")
+@RestController
+@RequestMapping("/api/interviewer")
 public class InterviewerController {
 	
 	@Autowired

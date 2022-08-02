@@ -6,12 +6,11 @@ public class BusinessException extends RuntimeException {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-    private String code;
+	private String code;
 	private String errorMessage;
 	private String failureReason;
 
-	
-	public BusinessException(String code,String errorMessage, String failureReason) {
+	public BusinessException(String code, String errorMessage, String failureReason) {
 		super();
 		this.code = code;
 		this.errorMessage = errorMessage;

@@ -9,7 +9,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserTimeSlot {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,47 +28,5 @@ public class UserTimeSlot {
 	private LocalDate onDate;
 	@ManyToOne
 	private ApplicationUser userId;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getFromTime() {
-		return fromTime;
-	}
-
-	public void setFromTime(String fromTime) {
-		this.fromTime = fromTime;
-	}
-
-	public String getToTime() {
-		return toTime;
-	}
-
-	public void setToTime(String toTime) {
-		this.toTime = toTime;
-	}
-
-	public LocalDate getOnDate() {
-		return onDate;
-	}
-
-	public void setOnDate(LocalDate onDate) {
-		this.onDate = onDate;
-	}
-
-	public ApplicationUser getUserId() {
-		return userId;
-	}
-
-	public void setUserId(ApplicationUser userId) {
-		this.userId = userId;
-	}
-
-	
 
 }

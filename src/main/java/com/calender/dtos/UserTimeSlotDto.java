@@ -1,6 +1,7 @@
 package com.calender.dtos;
 
-import java.time.LocalDate;
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 
 import com.calender.validators.From2Time;
@@ -29,9 +30,9 @@ public class UserTimeSlotDto {
 	private String toTime;
 	@JsonProperty("onDate")
 	@NotNull
-	private LocalDate onDate;
+	private Date onDate;
 	@JsonProperty("user")
 	@NotNull
-	private UserDto userId;
+	private UserDto user;
 
 }

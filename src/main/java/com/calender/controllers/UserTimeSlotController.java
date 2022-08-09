@@ -20,6 +20,24 @@ import com.calender.dtos.CustomAPIResponse;
 import com.calender.dtos.UserTimeSlotDto;
 import com.calender.services.UserTimeSlotService;
 
+/**
+ * @author sohail anwar
+ * 
+ * <blockquote> UserTimeSlotController
+ * 
+ *   UserTimeSlotController is handler for CRUD request for TimeSlot and handle below request.
+ *   
+ *   find all time slots including interviewers and candidates,
+ *   find all available time slots with candidate and interviewers ids.
+ *   add time slot for user
+ *   update time slot
+ *   delete time slot.
+ *   
+ * 
+ * 
+ * */
+
+
 @RestController
 @RequestMapping("/api/CandidateSlot")
 public class UserTimeSlotController {

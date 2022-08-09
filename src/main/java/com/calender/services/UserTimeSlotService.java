@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,40 +20,61 @@ import com.calender.entities.UserTimeSlot;
 import com.calender.exceptions.BusinessException;
 import com.calender.repositories.UserTimeSlotRepository;
 
+/**
+ * @author sohail anwar
+ * 
+ * <blockquote> UserTimeSlotService
+ * UserTimeSlotService handles request from UserTimeSlotController 
+ * 
+ * Using @ ModelMapper to map DTO with entities 
+ * using @ UserTimeSlotRepository
+ * 
+ * */
+
 @Service
 public class UserTimeSlotService {
 	@Autowired
 	private UserTimeSlotRepository repository;
 	@Autowired
 	private ModelMapper mapper;
+	
+	/**
+	 * @Method getAvaialbleTimeSlots,
+	 * 
+	 * First we fetch time slots for candidate with particular Id.
+	 * then we fetch Interviewers against Ids list.
+	 * passing lists to method fillAvailableSlots
+	 * 
+	 * @return availableTimeSlots
+	 * @throws BusinessException
+	 * 
+	 * */
 
-	public List<AvailableTimeSlot> getAvaialbleTimeSlots(@Valid AvailableSlotsRequest request) {
+	public List<AvailableTimeSlot> getAvaialbleTimeSlots(AvailableSlotsRequest request) {
 		List<AvailableTimeSlot> availableTimeSlots = new ArrayList<>();
 		try {
-			
-			List<UserTimeSlot> candidateTimeSlot = repository.findAllByUserId(request.getCandidateId());
-			
-			for(UserTimeSlot slot:candidateTimeSlot) {
-				List<UserTimeSlot> userTimeSlots = repository.getAvailableSlots(request.getInterviewersIds(),slot.getFromTime(),slot.getOnDate());
-				availableTimeSlots.add(fillAvailableSlots(slot, userTimeSlots));
-			}
+
+			UserTimeSlot candidateTimeSlot = repository.findByUserId(request.getCandidateId());
+			List<UserTimeSlot> interviewerTimeSlot = repository.findAllByUserIdIn(request.getInterviewersIds());
+			fillAvailableSlots(availableTimeSlots, candidateTimeSlot, interviewerTimeSlot);
+            System.out.print("\n\n"+availableTimeSlots.size()+"\n\n");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new BusinessException("ts-001","FAILURE", "Error while fetching Slot");
+			throw new BusinessException("ts-001", "FAILURE", "Error while fetching Slot");
 		}
 		return availableTimeSlots;
 	}
-	
+
 	public List<UserTimeSlotDto> findAll() {
 		List<UserTimeSlotDto> responseList = new ArrayList<>();
 		try {
 			List<UserTimeSlot> userTimeSlots = repository.findAll();
-			responseList = userTimeSlots.stream()
-			        .map(slot -> new UserTimeSlotDto(slot.getId(), slot.getFromTime(),slot.getToTime(),slot.getOnDate(),mapper.map(slot.getUserId(),UserDto.class)))
-			        .collect(Collectors.toList());
+			responseList = userTimeSlots.stream().map(slot -> new UserTimeSlotDto(slot.getId(), slot.getFromTime(),
+					slot.getToTime(), slot.getOnDate(), mapper.map(slot.getUser(), UserDto.class)))
+					.collect(Collectors.toList());
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new BusinessException("ts-002","FAILURE", "Error while Fetching Slot");
+			throw new BusinessException("ts-002", "FAILURE", "Error while Fetching Slot");
 		}
 		return responseList;
 	}
@@ -64,18 +83,18 @@ public class UserTimeSlotService {
 
 		CustomAPIResponse apiResponse = null;
 		try {
-			LocalTime fromTime =LocalTime.parse(timeSlot.getFromTime());
-			LocalTime toTime =LocalTime.parse(timeSlot.getToTime());
-			if (fromTime.until(toTime, ChronoUnit.HOURS) >1) {
-				throw new BusinessException("ts-005","FAILURE", "Error while Adding Slot");
+			LocalTime fromTime = LocalTime.parse(timeSlot.getFromTime());
+			LocalTime toTime = LocalTime.parse(timeSlot.getToTime());
+			if (fromTime.until(toTime, ChronoUnit.HOURS) > 1) {
+				throw new BusinessException("ts-005", "FAILURE", "From Time and to time should have 1 hour difference");
 			}
-			
+
 			UserTimeSlot slot = mapper.map(timeSlot, UserTimeSlot.class);
 			repository.save(slot);
 			apiResponse = new CustomAPIResponse("200", "SUCCESS", "Slot Added Successfully");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new BusinessException("ts-003","FAILURE", "Error while Adding Slot");
+			throw new BusinessException("ts-003", "FAILURE", "Error while Adding Slot");
 		}
 		return apiResponse;
 	}
@@ -89,7 +108,7 @@ public class UserTimeSlotService {
 			repository.save(slot);
 			apiResponse = new CustomAPIResponse("200", "SUCCESS", "User update Successfully");
 		} catch (Exception e) {
-			throw new BusinessException("ts-003","FAILURE", "Error while updating user");
+			throw new BusinessException("ts-003", "FAILURE", "Error while updating user");
 		}
 		return apiResponse;
 	}
@@ -100,22 +119,48 @@ public class UserTimeSlotService {
 			repository.deleteById(id);
 			apiResponse = new CustomAPIResponse("200", "SUCCESS", "Slot Deleted Successfully");
 		} catch (Exception e) {
-			throw new BusinessException("ts-004","FAILURE", "Error while Deleting Slot");
+			throw new BusinessException("ts-004", "FAILURE", "Error while Deleting Slot");
 		}
 		return apiResponse;
 	}
-	
-	private AvailableTimeSlot fillAvailableSlots(UserTimeSlot slot,List<UserTimeSlot> userTimeSlots) {
-		AvailableTimeSlot availableTimeSlot = new AvailableTimeSlot();
-		availableTimeSlot.setCandidate(slot.getUserId());
-		availableTimeSlot.setFromTime(slot.getFromTime());
-		availableTimeSlot.setToTime(slot.getToTime());
-		availableTimeSlot.setOnDate(slot.getOnDate());
-		List<ApplicationUser> applicationUsers =new ArrayList<>();
-		for(UserTimeSlot userTimeSlot:userTimeSlots) 
-			applicationUsers.add(userTimeSlot.getUserId());
-		availableTimeSlot.setInterviewers(applicationUsers);
-		return availableTimeSlot;
-	}
 
+	/**
+	 * @Method fillAvailableSlots 
+	 * 
+	 * private method 
+	 * 
+	 * get below parameters as input
+	 * 
+	 * availableTimeSlots (an empty list)
+	 * UserTimeSlot time slot object for candidate
+	 * interviewerTimeSlot list for interviewers time slots
+	 * 
+	 * get interview start time and on date from candidate slot object and will compare if 
+	 * any is available in interviewers and add to to available time slot otherwise will ignore it.
+	 * 
+	 * @return availableTimeSlots
+	 * 
+	 * */
+	private List<AvailableTimeSlot> fillAvailableSlots(List<AvailableTimeSlot> availableTimeSlots,
+			UserTimeSlot slot, List<UserTimeSlot> interviewerTimeSlot) {
+
+		
+			AvailableTimeSlot availableTimeSlot = new AvailableTimeSlot();
+			availableTimeSlot.setFromTime(slot.getFromTime());
+			availableTimeSlot.setOnDate(slot.getOnDate());
+			availableTimeSlot.setCandidate(slot.getUser());
+			availableTimeSlot.setToTime(slot.getToTime());
+			List<ApplicationUser> interviewers = new ArrayList<>();
+			for(UserTimeSlot slot2:interviewerTimeSlot) {
+				if(slot.getFromTime().equals(slot2.getFromTime()) && slot.getOnDate().equals(slot2.getOnDate())) {
+					interviewers.add(slot2.getUser());
+				}
+				
+			}
+			availableTimeSlot.setInterviewers(interviewers);
+			
+			availableTimeSlots.add(availableTimeSlot);
+		return availableTimeSlots;
+
+	}
 }

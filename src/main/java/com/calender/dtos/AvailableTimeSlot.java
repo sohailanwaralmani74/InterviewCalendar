@@ -1,6 +1,6 @@
 package com.calender.dtos;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import com.calender.entities.ApplicationUser;
@@ -15,7 +15,7 @@ public class AvailableTimeSlot {
 
 	private String fromTime;
 	private String toTime;
-	private LocalDate onDate;
+	private Date onDate;
 	private ApplicationUser candidate;
 	private List<ApplicationUser> interviewers;
 

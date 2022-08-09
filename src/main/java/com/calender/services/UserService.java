@@ -57,7 +57,7 @@ public class UserService {
 			userRepository.save(user);
 			apiResponse = new CustomAPIResponse("200","SUCCESS","User update Successfully");
 		} catch (Exception e) {
-			throw new BusinessException("au-003","FAILURE", "Error while updating user");
+			throw new BusinessException("au-003","FAILURE", "User does not exists with id:"+id);
 		}
 		return apiResponse;
 	}
@@ -68,7 +68,7 @@ public class UserService {
 			userRepository.deleteById(id);
 			apiResponse = new CustomAPIResponse("200","SUCCESS","User Deleted Successfully");
 		} catch (Exception e) {
-			throw new BusinessException("au-004","FAILURE", "Error while Deleting user");
+			throw new BusinessException("au-004","FAILURE", "User Not Found");
 		}
 		return apiResponse;
 	}

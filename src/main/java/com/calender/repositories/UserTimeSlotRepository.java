@@ -10,14 +10,11 @@ import com.calender.entities.UserTimeSlot;
 @Repository
 public interface UserTimeSlotRepository extends JpaRepository<UserTimeSlot, Long> {
 
-	/*
-	 * @Query(nativeQuery = true, value =
-	 * "select * from User_Time_Slot ts where ts.on_date = :onDate and ts.from_time = :fromTime and ts.user_id_id in(:interviewers)"
-	 * ) public List<UserTimeSlot> getAvailableSlots(@Param("interviewers")
-	 * List<Long> interviewers,
+	/**
+	 * findByUserId will create a join query and fetch data against user id provided
 	 * 
-	 * @Param("fromTime") String fromTime, @Param("onDate") LocalDate onDate);
-	 */
+	 * findAllByUserIdIn create outer join on application user table and will find with user ids in (?,?,...)
+	 * */
 	public UserTimeSlot findByUserId(long candidateId);
 	public List<UserTimeSlot> findAllByUserIdIn( List<Long> interviewersIds);
 	

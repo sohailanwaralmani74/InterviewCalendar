@@ -43,7 +43,7 @@ public class UserTimeSlotService {
 	 * 
 	 * First we fetch time slots for candidate with particular Id.
 	 * then we fetch Interviewers against Ids list.
-	 * passing lists to method fillAvailableSlots
+	 * passing lists to method fillAvailableSlots for further processing
 	 * 
 	 * @return availableTimeSlots
 	 * @throws BusinessException

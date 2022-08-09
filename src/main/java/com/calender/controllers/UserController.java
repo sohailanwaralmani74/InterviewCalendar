@@ -18,6 +18,21 @@ import com.calender.dtos.CustomAPIResponse;
 import com.calender.dtos.UserDto;
 import com.calender.services.UserService;
 
+/**
+ * @author sohail anwar
+ * 
+ * <blockquote> UserController
+ * 
+ *   UserController is handler for CRUD request for User and handle below request.
+ *   
+ *   find all Users including interviewers and candidates,
+ *   add user
+ *   update user
+ *   delete user
+ *   
+ * 
+ * 
+ * */
 
 
 @RestController

@@ -11,10 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class UserTimeSlot {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@org.springframework.data.annotation.Id

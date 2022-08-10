@@ -1,44 +1,35 @@
-##Interviewer Claendar
-#Technologies Used
+<h1>Interviewer Claendar</h1>
+
+<h3>Technologies Used</h1>
+
 Spring boot , JPA as an ORM, Mockito, JUnit for test cases.
+
 Heroku for deployment of application and DB deployment.
+
 Postgresql as DB.
+
 Open API for Testing and documentation of API
+
 ModelMapper dependency for Mapping between DTO and Entity objects.
 
-#swagger URLs
-http://localhost:8080/swagger-ui/index.html#/
-http://calendar-pp.herokuapp.com/swagger-ui.html
-#Functionalities
-User Operations
-Calendar Operations
-For Payload please refer open API docs at above given urls 
-#User Operations.
-Add user
-POST' 
-  'http://localhost:8080/api/user'
-Update user
-PUT
-  'http://localhost:8080/api/user/1
-GET
-  'http://localhost:8080/api/user
-DELETE
-  'http://localhost:8080/api/user/1
-#TimeSlot Operation
-POST
-http://localhost:8080/api/CandidateSlot/availableSlots
-GET
-http://localhost:8080/api/CandidateSlot
-POST
-http://localhost:8080/api/CandidateSlot
-PUT
-http://localhost:8080/api/CandidateSlot/1
-DELETE
-http://localhost:8080/api/CandidateSlot/1
+<h2>swagger URLs </h2>
 
-Custom API response is used for return custom messages to User end.
+http://localhost:8080/swagger-ui/index.html
+
+http://calendar-pp.herokuapp.com/swagger-ui.html
+
+<h2>Functionalities</h2>
+
+User Operations
+	
+Calendar Operations
+	
+For Payload please refer open API docs at above given urls 
+		
 Custom business exception is thrown in case of any failure.
+
 refer exception packages for classes of Custom exception handler
+
 #Below Method is used for available time slot comparision
 
 	/**
@@ -81,16 +72,18 @@ refer exception packages for classes of Custom exception handler
 
 	}
 
-##Test Class
+<h1>Test Class</h1>
 
-#Mock are written for below operation
+<h2>Mock are written for below operation</h2>
+
 User Operations
+
 Calendar Operations
-#Classes
+
+<h2>Classes</h2>
+
 ApplicationUserTest
+
 UserTimeSlotTest
 
-#Custom Anotations are used for some fields verification.
-#@Role -> to verify valid user role.
-#@FromToTime  --> to validate FromTime and To Time.
 

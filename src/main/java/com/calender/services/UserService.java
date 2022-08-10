@@ -2,13 +2,16 @@ package com.calender.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.calender.dtos.CustomAPIResponse;
 import com.calender.dtos.UserDto;
 import com.calender.entities.ApplicationUser;
 import com.calender.exceptions.BusinessException;
@@ -21,56 +24,68 @@ public class UserService {
 	@Autowired
 	private ModelMapper mapper;
 
-	public List<UserDto> getAllUsers() {
+	public List<UserDto> getAllUsers(String role, Integer pageNo, Integer pageSize) {
 		List<UserDto> usersList = new ArrayList<>();
 		try {
-		List<ApplicationUser> applicationUsersList = userRepository.findAll();
-		 usersList = applicationUsersList.stream()
-		        .map(user -> new UserDto(user.getId(), user.getName(),user.getRole()))
-		        .collect(Collectors.toList());
-		}catch (Exception e) {
+			
+			Pageable pageable = PageRequest.of(pageNo, pageSize);
+			Page<ApplicationUser> pagedResult = userRepository.findAllByRole(role, pageable);
+			
+			usersList = pagedResult.getContent().stream()
+					.map(user -> new UserDto(user.getId(), user.getName(), user.getRole()))
+					.collect(Collectors.toList());
+			
+		} catch (Exception e) {
 			e.printStackTrace();
-			throw new BusinessException("au-0001","FAILURE", "Error while Fetching user");
+			throw new BusinessException("au-0001", "FAILURE", "Error while Fetching user");
 		}
 		return usersList;
 
 	}
 
-	public CustomAPIResponse addUser(UserDto userDto) {
-		CustomAPIResponse apiResponse =null;
+	public ApplicationUser addUser(UserDto userDto) {
 		try {
+			
 			ApplicationUser user = mapper.map(userDto, ApplicationUser.class);
-			userRepository.save(user);
-			apiResponse = new CustomAPIResponse("200","SUCCESS","User Saved Successfully");
+			user = userRepository.save(user);
+			return user;
+			
 		} catch (Exception e) {
-			throw new BusinessException("au-002","FAILURE", "Error while saving user");
+			throw new BusinessException("au-002", "FAILURE", "Error while saving user");
 		}
 
-		return apiResponse;
 	}
 
-	public CustomAPIResponse updateUser(UserDto userDto, long id) {
-		CustomAPIResponse apiResponse = null;
+	public ApplicationUser updateUser(UserDto userDto, long id) {
 		try {
+			
 			ApplicationUser user = mapper.map(userDto, ApplicationUser.class);
 			user.setId(id);
-			userRepository.save(user);
-			apiResponse = new CustomAPIResponse("200","SUCCESS","User update Successfully");
+			user = userRepository.save(user);
+			return user;
+			
 		} catch (Exception e) {
-			throw new BusinessException("au-003","FAILURE", "User does not exists with id:"+id);
+			throw new BusinessException("au-003", "FAILURE", "User does not exists with id:" + id);
 		}
-		return apiResponse;
 	}
 
-	public CustomAPIResponse deleteUser(long id) {
-		CustomAPIResponse apiResponse = null;
+	public void deleteUser(long id) {
 		try {
+			
 			userRepository.deleteById(id);
-			apiResponse = new CustomAPIResponse("200","SUCCESS","User Deleted Successfully");
+			
 		} catch (Exception e) {
-			throw new BusinessException("au-004","FAILURE", "User Not Found");
+			throw new BusinessException("au-004", "FAILURE", "User Not Found");
 		}
-		return apiResponse;
 	}
 
+	public UserDto findById(long id) {
+		try {
+			Optional<ApplicationUser> user = userRepository.findById(id);
+			UserDto userDto = mapper.map(user.get(), UserDto.class);
+			return userDto;
+		} catch (Exception e) {
+			throw new BusinessException("au-004", "FAILURE", "User Not Found");
+		}
+	}
 }

@@ -1,9 +1,9 @@
 package com.calender.dtos;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.calender.validators.Role;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -20,14 +20,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
+	
 	@JsonProperty("id")
 	private Long id;
+	
 	@NotEmpty
 	@Size(min = 3, message = "user name should have at least 3 characters")
 	@JsonProperty("name")
 	private String name;
+	
 	@JsonProperty("role")
-	@Role
+	@Pattern(regexp = "INTERVIEWER|CANDIDATE", message="Acceptable Values are INTERVIEWER or CANDIDATE")
 	private String role;
 
 }

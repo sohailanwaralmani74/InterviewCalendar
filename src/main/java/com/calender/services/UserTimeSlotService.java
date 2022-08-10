@@ -1,19 +1,13 @@
 package com.calender.services;
 
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.calender.dtos.AvailableSlotsRequest;
 import com.calender.dtos.AvailableTimeSlot;
-import com.calender.dtos.CustomAPIResponse;
-import com.calender.dtos.UserDto;
 import com.calender.dtos.UserTimeSlotDto;
 import com.calender.entities.ApplicationUser;
 import com.calender.entities.UserTimeSlot;
@@ -51,81 +45,39 @@ public class UserTimeSlotService {
 	 * */
 
 	public List<AvailableTimeSlot> getAvaialbleTimeSlots(AvailableSlotsRequest request) {
-		List<AvailableTimeSlot> availableTimeSlots = new ArrayList<>();
 		try {
 
 			UserTimeSlot candidateTimeSlot = repository.findByUserId(request.getCandidateId());
 			List<UserTimeSlot> interviewerTimeSlot = repository.findAllByUserIdIn(request.getInterviewersIds());
-			fillAvailableSlots(availableTimeSlots, candidateTimeSlot, interviewerTimeSlot);
-            System.out.print("\n\n"+availableTimeSlots.size()+"\n\n");
+			if(candidateTimeSlot == null || interviewerTimeSlot == null)
+				return new ArrayList<>();
+			
+			return composeAvailableSlotsList(candidateTimeSlot, interviewerTimeSlot);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("ts-001", "FAILURE", "Error while fetching Slot");
 		}
-		return availableTimeSlots;
-	}
-
-	public List<UserTimeSlotDto> findAll() {
-		List<UserTimeSlotDto> responseList = new ArrayList<>();
-		try {
-			List<UserTimeSlot> userTimeSlots = repository.findAll();
-			responseList = userTimeSlots.stream().map(slot -> new UserTimeSlotDto(slot.getId(), slot.getFromTime(),
-					slot.getToTime(), slot.getOnDate(), mapper.map(slot.getUser(), UserDto.class)))
-					.collect(Collectors.toList());
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new BusinessException("ts-002", "FAILURE", "Error while Fetching Slot");
 		}
-		return responseList;
-	}
 
-	public CustomAPIResponse addTimeSlot(UserTimeSlotDto timeSlot) {
+	public List<UserTimeSlot> addTimeSlot(UserTimeSlotDto timeSlot) {
 
-		CustomAPIResponse apiResponse = null;
 		try {
-			LocalTime fromTime = LocalTime.parse(timeSlot.getFromTime());
-			LocalTime toTime = LocalTime.parse(timeSlot.getToTime());
-			if (fromTime.until(toTime, ChronoUnit.HOURS) > 1) {
-				throw new BusinessException("ts-005", "FAILURE", "From Time and to time should have 1 hour difference");
+			if(timeSlot.getFromTime()>=timeSlot.getToTime()) {
+				throw new BusinessException("ts-002", "FAILURE", "End Time should be greater than start time");
 			}
-
 			UserTimeSlot slot = mapper.map(timeSlot, UserTimeSlot.class);
-			repository.save(slot);
-			apiResponse = new CustomAPIResponse("200", "SUCCESS", "Slot Added Successfully");
+			List<UserTimeSlot> timeSlotLost =  prepareSlotsForPersistance(slot);
+			return repository.saveAll(timeSlotLost);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("ts-003", "FAILURE", "Error while Adding Slot");
 		}
-		return apiResponse;
-	}
-
-	public CustomAPIResponse updateTimeSlot(UserTimeSlotDto timeSlot, long id) {
-
-		CustomAPIResponse apiResponse = null;
-		try {
-			UserTimeSlot slot = mapper.map(timeSlot, UserTimeSlot.class);
-			slot.setId(id);
-			repository.save(slot);
-			apiResponse = new CustomAPIResponse("200", "SUCCESS", "User update Successfully");
-		} catch (Exception e) {
-			throw new BusinessException("ts-003", "FAILURE", "Error while updating user");
-		}
-		return apiResponse;
-	}
-
-	public CustomAPIResponse deleteTimeSlot(long id) {
-		CustomAPIResponse apiResponse = null;
-		try {
-			repository.deleteById(id);
-			apiResponse = new CustomAPIResponse("200", "SUCCESS", "Slot Deleted Successfully");
-		} catch (Exception e) {
-			throw new BusinessException("ts-004", "FAILURE", "Error while Deleting Slot");
-		}
-		return apiResponse;
 	}
 
 	/**
-	 * @Method fillAvailableSlots 
+	 * @Method composeAvailableSlotsList 
 	 * 
 	 * private method 
 	 * 
@@ -141,26 +93,56 @@ public class UserTimeSlotService {
 	 * @return availableTimeSlots
 	 * 
 	 * */
-	private List<AvailableTimeSlot> fillAvailableSlots(List<AvailableTimeSlot> availableTimeSlots,
-			UserTimeSlot slot, List<UserTimeSlot> interviewerTimeSlot) {
+	private List<AvailableTimeSlot> composeAvailableSlotsList(UserTimeSlot slot, List<UserTimeSlot> interviewerTimeSlot) {
 
-		
-			AvailableTimeSlot availableTimeSlot = new AvailableTimeSlot();
-			availableTimeSlot.setFromTime(slot.getFromTime());
-			availableTimeSlot.setOnDate(slot.getOnDate());
-			availableTimeSlot.setCandidate(slot.getUser());
-			availableTimeSlot.setToTime(slot.getToTime());
+		    List<AvailableTimeSlot> availableTimeSlots = new ArrayList<>();
+		    
+			AvailableTimeSlot availableTimeSlot =  AvailableTimeSlot.builder()
+					.fromTime(slot.getFromTime())
+					.toTime(slot.getFromTime())
+					.onDate(slot.getOnDate())
+					.candidate(slot.getUser()).build();
+			
 			List<ApplicationUser> interviewers = new ArrayList<>();
+			
 			for(UserTimeSlot slot2:interviewerTimeSlot) {
-				if(slot.getFromTime().equals(slot2.getFromTime()) && slot.getOnDate().equals(slot2.getOnDate())) {
+				if(slot.getFromTime()==slot2.getFromTime() && slot.getOnDate()== slot2.getOnDate()) {
 					interviewers.add(slot2.getUser());
 				}
-				
 			}
 			availableTimeSlot.setInterviewers(interviewers);
 			
 			availableTimeSlots.add(availableTimeSlot);
 		return availableTimeSlots;
 
+	}
+	
+	
+	/**
+	 * @Method prepareSlotsForPersistance 
+	 * 
+	 * private method 
+	 * 
+	 * @param UserTimeSlot
+	 * 
+	 * set list of time slots in given time.
+	 * 
+	 * @return slots
+	 * 
+	 * */
+	
+	private List<UserTimeSlot> prepareSlotsForPersistance(UserTimeSlot slot){
+		List<UserTimeSlot> slots  = new ArrayList<>();
+		int totalSlots = slot.getToTime()-slot.getFromTime();
+		for(int i =0; i<totalSlots; i++) {
+			UserTimeSlot timeSlot = UserTimeSlot.builder()
+					.fromTime(slot.getFromTime()+i)
+					.toTime(slot.getFromTime()+i+1)
+					.onDate(slot.getOnDate())
+					.user(slot.getUser())
+					.build();
+			slots.add(timeSlot);
+		}
+		return slots;
 	}
 }

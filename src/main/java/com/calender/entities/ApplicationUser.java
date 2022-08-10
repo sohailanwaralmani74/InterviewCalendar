@@ -21,11 +21,11 @@ public class ApplicationUser {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ID", unique = true, nullable = false)
 	private Long id;
+	
 	@Column(name = "NAME", nullable = false)
 	private String name;
+	
 	@Column(name = "ROLE", nullable = false)
 	private String role;
 	
-	
-
 }

@@ -2,9 +2,10 @@ package com.calender.dtos;
 
 import java.util.Date;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import com.calender.validators.From2Time;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,12 +23,17 @@ import lombok.NoArgsConstructor;
 public class UserTimeSlotDto {
 	@JsonProperty("id")
 	private Long id;
+	
 	@JsonProperty("fromTime")
-	@From2Time(message = "From time should be perfect hour eg '01:00:00'")
-	private String fromTime;
+	@Min(value = 9)
+	@Max(value = 16)
+	private int fromTime;
+	
 	@JsonProperty("toTime")
-	@From2Time(message = "From time should be perfect hour eg '01:00:00'")
-	private String toTime;
+	@Min(value = 10)
+	@Max(value = 16)
+	private int toTime;
+	
 	@JsonProperty("onDate")
 	@NotNull
 	private Date onDate;

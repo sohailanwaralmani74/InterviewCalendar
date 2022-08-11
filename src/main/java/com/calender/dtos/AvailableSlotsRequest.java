@@ -20,5 +20,4 @@ public class AvailableSlotsRequest {
 	
 	@NotNull(message = "Please provide valid Interviewer Ids")
 	private List<Long> interviewersIds;
-
 }

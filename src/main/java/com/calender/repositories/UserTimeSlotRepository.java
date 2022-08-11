@@ -13,10 +13,9 @@ public interface UserTimeSlotRepository extends JpaRepository<UserTimeSlot, Long
 	/**
 	 * findByUserId will create a join query and fetch data against user id provided
 	 * 
-	 * findAllByUserIdIn create outer join on application user table and will find with user ids in (?,?,...)
-	 * */
-	
+	 * findAllByUserIdIn create outer join on application user table and will find with user names in (?,?,...)
+	 * */	
 	public UserTimeSlot findByUserId(long candidateId);
-	public List<UserTimeSlot> findAllByUserIdIn( List<Long> interviewersIds);
+	public List<UserTimeSlot> findAllByUserNameIn(List<String> interviewers);
 	
 }

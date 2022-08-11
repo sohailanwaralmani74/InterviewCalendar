@@ -14,29 +14,22 @@ public class BusinessException extends RuntimeException {
 		this.errorMessage = errorMessage;
 		this.failureReason = failureReason;
 	}
-
 	public String getErrorMessage() {
 		return errorMessage;
 	}
-
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-
 	public String getFailureReason() {
 		return failureReason;
 	}
-
 	public void setFailureReason(String failureReason) {
 		this.failureReason = failureReason;
 	}
-
 	public String getCode() {
 		return code;
 	}
-
 	public void setCode(String code) {
 		this.code = code;
 	}
-
 }

@@ -26,20 +26,14 @@ public class UserTimeSlot {
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
 	private Long id;
-	
 	@Column(name = "start_time")
 	private int startTime;
-	
 	@Column(name = "end_time")
 	private int endTime;
-	
 	@Column(name = "on_date")
 	private Date onDate;
-	
 	@Column(name = "day")
 	private String day;
-	
 	@ManyToOne
 	private ApplicationUser user;
-
 }

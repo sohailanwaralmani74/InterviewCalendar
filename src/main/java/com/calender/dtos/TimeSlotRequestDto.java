@@ -27,5 +27,4 @@ public class TimeSlotRequestDto {
 	@JsonProperty("user")
 	@NotNull
 	private UserDto user;
-
 }

@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.calender.dtos.AvailableSlotsRequest;
 import com.calender.dtos.AvailableTimeSlot;
 import com.calender.entities.ApplicationUser;
 import com.calender.entities.UserTimeSlot;
@@ -31,11 +30,6 @@ class UserTimeSlotTest {
 	
 	@Test
 	void testGetAvailableSlots() {
-		AvailableSlotsRequest request = AvailableSlotsRequest.builder()
-				.candidateId(1L)
-				.interviewersIds(Arrays.asList(2L,3L))
-				.build();
-		
 		List<AvailableTimeSlot> availableTimeSlots = Arrays.asList(
 				AvailableTimeSlot.builder()
 				.day("Thursday")
@@ -46,14 +40,10 @@ class UserTimeSlotTest {
 				.interviewers(Arrays.asList(
 						new ApplicationUser(2L, "Ahmed", "INTERVIEWER"),
 						new ApplicationUser(3L, "Ali", "INTERVIEWER")))
-				.build()
-				
-				);
-		
-		when(service.getAvaialbleTimeSlots(request)).thenReturn(availableTimeSlots);
-		assertEquals(1, service.getAvaialbleTimeSlots(request).size());
+				.build());
+		when(service.getAvaialbleTimeSlots(1,Arrays.asList("Ahmed","Ali"))).thenReturn(availableTimeSlots);
+		assertEquals(1, service.getAvaialbleTimeSlots(1,Arrays.asList("Ahmed","Ali")).size());
 	}
-
 	@Test
 	void testAddTimeSlot() {
 		UserTimeSlot slot =	 UserTimeSlot.builder()

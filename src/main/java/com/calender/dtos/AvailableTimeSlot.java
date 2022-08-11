@@ -21,8 +21,4 @@ public class AvailableTimeSlot {
 	private String day;
 	private ApplicationUser candidate;
 	private List<ApplicationUser> interviewers;
-
-
-	
-
 }

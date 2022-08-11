@@ -42,7 +42,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
-
 	
 	private UserServiceImpl userService;
 	
@@ -58,7 +57,6 @@ public class UserController {
 		
 		return new ResponseEntity<>(userService.getAllUsers(role, pageNo,pageSize), HttpStatus.OK);
 	}
-	
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getUserById(@PathVariable long id) {

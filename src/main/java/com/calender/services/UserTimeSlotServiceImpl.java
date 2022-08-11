@@ -2,20 +2,16 @@ package com.calender.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.calender.dtos.AvailableSlotsRequest;
 import com.calender.dtos.AvailableTimeSlot;
 import com.calender.dtos.TimeSlotDTO;
 import com.calender.dtos.TimeSlotRequestDto;
 import com.calender.entities.ApplicationUser;
 import com.calender.entities.UserTimeSlot;
 import com.calender.exceptions.BusinessException;
-import com.calender.repositories.UserRepository;
 import com.calender.repositories.UserTimeSlotRepository;
 
 /**
@@ -30,10 +26,9 @@ import com.calender.repositories.UserTimeSlotRepository;
  */
 
 @Service
-public class UserTimeSlotServiceImpl {
+public class UserTimeSlotServiceImpl implements UserTimeSlotService{
 
 	private UserTimeSlotRepository repository;
-	private UserRepository userRepository;
 	private ModelMapper mapper;
 
 	/**
@@ -49,33 +44,26 @@ public class UserTimeSlotServiceImpl {
 	 */
 	
 	@Autowired
-	public UserTimeSlotServiceImpl(UserRepository userRepository, UserTimeSlotRepository repository, ModelMapper mapper) {
-		this.userRepository = userRepository;
+	public UserTimeSlotServiceImpl(UserTimeSlotRepository repository, ModelMapper mapper) {
 		this.repository = repository;
 		this.mapper = mapper;
 	}
-
-	public List<AvailableTimeSlot> getAvaialbleTimeSlots(AvailableSlotsRequest request) {
+	public List<AvailableTimeSlot> getAvaialbleTimeSlots(long candidateId, List<String> interviewers) {
 		try {
-
-			UserTimeSlot candidateTimeSlot = repository.findByUserId(request.getCandidateId());
-			List<UserTimeSlot> interviewerTimeSlot = repository.findAllByUserIdIn(request.getInterviewersIds());
+			UserTimeSlot candidateTimeSlot = repository.findByUserId(candidateId);
+			List<UserTimeSlot> interviewerTimeSlot = repository.findAllByUserNameIn(interviewers);
 			if (candidateTimeSlot == null || interviewerTimeSlot == null)
 				return new ArrayList<>();
-
 			return composeAvailableSlotsList(candidateTimeSlot, interviewerTimeSlot);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("ts-001", "FAILURE", "Error while fetching Slot");
 		}
 	}
-
 	public List<UserTimeSlot> addTimeSlot(TimeSlotRequestDto userTimeSlot) {
 		try {
 			List<UserTimeSlot> timeSlotList = prepareSlotsForPersistance(userTimeSlot);
 			return repository.saveAll(timeSlotList);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("ts-003", "FAILURE", "Error while Adding Slot");
@@ -99,12 +87,9 @@ public class UserTimeSlotServiceImpl {
 	 * @return availableTimeSlots
 	 * 
 	 */
-	private List<AvailableTimeSlot> composeAvailableSlotsList(UserTimeSlot slot,
-			List<UserTimeSlot> interviewerTimeSlot) {
-
+	private List<AvailableTimeSlot> composeAvailableSlotsList(UserTimeSlot slot,List<UserTimeSlot> interviewerTimeSlot) {
 		List<ApplicationUser> interviewers = new ArrayList<>();
 		List<AvailableTimeSlot> availableTimeSlots = new ArrayList<>();
-
 		AvailableTimeSlot availableTimeSlot = AvailableTimeSlot.builder()
 				.startTime(slot.getStartTime())
 				.endTime(slot.getEndTime())
@@ -112,7 +97,6 @@ public class UserTimeSlotServiceImpl {
 				.day(slot.getDay())
 				.candidate(slot.getUser())
 				.build();
-
 		for (UserTimeSlot slot2 : interviewerTimeSlot) {
 			if (slot.getStartTime() == slot2.getStartTime() && slot.getOnDate() == slot2.getOnDate()) {
 				interviewers.add(slot2.getUser());
@@ -121,7 +105,6 @@ public class UserTimeSlotServiceImpl {
 		availableTimeSlot.setInterviewers(interviewers);
 		availableTimeSlots.add(availableTimeSlot);
 		return availableTimeSlots;
-
 	}
 
 	/**
@@ -136,10 +119,6 @@ public class UserTimeSlotServiceImpl {
 	 */
 
 	private List<UserTimeSlot> prepareSlotsForPersistance(TimeSlotRequestDto timeSlotRequestDto) {
-		Optional<ApplicationUser> user = userRepository.findById(timeSlotRequestDto.getUser().getId());
-		if(!user.isPresent()) {
-			throw new BusinessException("404", "Failure", "User Not Found");
-		}
 		List<UserTimeSlot> slots = new ArrayList<>();
 		for (TimeSlotDTO timeSlotDto : timeSlotRequestDto.getTimeSLots()) {
 			int totalSlots = timeSlotDto.getEndTime() - timeSlotDto.getStartTime();
@@ -155,9 +134,7 @@ public class UserTimeSlotServiceImpl {
 					slots.add(timeSlot);
 				}
 			}
-
 		}
-
 		return slots;
 	}
 }

@@ -29,7 +29,6 @@ public class UserServiceImpl implements UserService{
 		this.mapper = mapper;
 		
 	}
-
 	public List<UserDto> getAllUsers(String role, Integer pageNo, Integer pageSize) {
 		List<UserDto> usersList = new ArrayList<>();
 		try {
@@ -38,15 +37,13 @@ public class UserServiceImpl implements UserService{
 			
 			usersList = pagedResult.getContent().stream()
 					.map(user -> new UserDto(user.getId(), user.getName(), user.getRole()))
-					.collect(Collectors.toList());
-			
+					.collect(Collectors.toList());		
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BusinessException("au-0001", "FAILURE", "Error while Fetching user");
 		}
 		return usersList;
 	}
-
 	public ApplicationUser addUser(UserDto userDto) {
 		try {
 			ApplicationUser user = mapper.map(userDto, ApplicationUser.class);
@@ -68,9 +65,7 @@ public class UserServiceImpl implements UserService{
 	}
 	public void deleteUser(long id) {
 		try {
-			
-			userRepository.deleteById(id);
-			
+			userRepository.deleteById(id);	
 		} catch (Exception e) {
 			throw new BusinessException("au-004", "FAILURE", "User Not Found");
 		}
@@ -81,7 +76,7 @@ public class UserServiceImpl implements UserService{
 			UserDto userDto = mapper.map(user.get(), UserDto.class);
 			return userDto;
 		} catch (Exception e) {
-			throw new BusinessException("au-004", "FAILURE", "User Not Found");
+			throw new BusinessException("au-005", "FAILURE", "User Not Found");
 		}
 	}
 }

@@ -18,6 +18,7 @@ public class AvailableTimeSlot {
 	private int fromTime;
 	private int toTime;
 	private Date onDate;
+	private String day;
 	private ApplicationUser candidate;
 	private List<ApplicationUser> interviewers;
 

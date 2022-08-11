@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CalenderApp {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(CalenderApp.class, args);
 	}
-	
+
 }

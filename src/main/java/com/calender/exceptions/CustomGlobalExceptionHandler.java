@@ -18,10 +18,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 	
 	@ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleExceptions( BusinessException exception, WebRequest webRequest) {
-		CustomException response = new CustomException();
-        response.setCode(exception.getCode());
-        response.setMessage(exception.getMessage());
-        response.setReason(exception.getFailureReason());
+		CustomException response = CustomException.builder()
+				.code(exception.getCode())
+				.message(exception.getMessage())
+				.reason(exception.getFailureReason())
+				.build();
         ResponseEntity<Object> entity = new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         return entity;
     }

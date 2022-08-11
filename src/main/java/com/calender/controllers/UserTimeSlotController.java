@@ -1,5 +1,7 @@
 package com.calender.controllers;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.calender.dtos.AvailableSlotsRequest;
 import com.calender.dtos.UserTimeSlotDto;
-import com.calender.services.UserTimeSlotService;
+import com.calender.services.UserTimeSlotServiceImpl;
 
 /**
  * @author Sohail Anwar
@@ -31,10 +33,11 @@ import com.calender.services.UserTimeSlotService;
  */
 
 @RestController
-@RequestMapping("/api/v1/interviewerSlots")
+@RequestMapping("/api/v1/interviewSlots")
 public class UserTimeSlotController {
+	
 	@Autowired
-	private UserTimeSlotService timeSlotService;
+	private UserTimeSlotServiceImpl timeSlotService;
 
 	@PostMapping("/availableSlots")
 	public ResponseEntity<?> getAvailableSlots(@Valid @RequestBody AvailableSlotsRequest request) {
@@ -42,8 +45,8 @@ public class UserTimeSlotController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> addTimeSlot(@Valid @RequestBody UserTimeSlotDto userTimeSlot) {
-		return new ResponseEntity<>(timeSlotService.addTimeSlot(userTimeSlot), HttpStatus.OK);
+	public ResponseEntity<?> addTimeSlot(@Valid @RequestBody List<UserTimeSlotDto> userTimeSlot) {
+		return new ResponseEntity<>(timeSlotService.addTimeSlot(userTimeSlot), HttpStatus.CREATED);
 	}
 
 }

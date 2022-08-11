@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.calender.dtos.UserDto;
-import com.calender.services.UserService;
+import com.calender.services.UserServiceImpl;
 
 /**
  * @author sohail anwar
@@ -41,36 +41,41 @@ import com.calender.services.UserService;
 public class UserController {
 
 	@Autowired
-	private UserService userService;
+	private UserServiceImpl userService;
 
 	@GetMapping
 	public ResponseEntity<?> getAllusers(@Pattern(regexp = "INTERVIEWER|CANDIDATE") @RequestParam String role,
 			@Positive @RequestParam(defaultValue = "0") Integer pageNo,
 			@Max(value = 10) @Positive @RequestParam(defaultValue = "10") Integer pageSize) {
+		
 		return new ResponseEntity<>(userService.getAllUsers(role, pageNo,pageSize), HttpStatus.OK);
 	}
 	
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getUserById(@PathVariable long id) {
+		
 		return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
 	}
 
 	@PostMapping
 	public ResponseEntity<?> adduser(@Valid @RequestBody UserDto userDto) {
-		return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.OK);
+		
+		return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateuser(@Valid @RequestBody UserDto userDto, @PathVariable long id) {
-		return new ResponseEntity<>(userService.updateUser(userDto, id), HttpStatus.OK);
+		
+		return new ResponseEntity<>(userService.updateUser(userDto, id), HttpStatus.NO_CONTENT);
 
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteuser(@PathVariable long id) {
+		
 		userService.deleteUser(id);
-		return new ResponseEntity<>("Success", HttpStatus.OK);
+		return new ResponseEntity<>("Success",  HttpStatus.NO_CONTENT);
 	}
 
 }

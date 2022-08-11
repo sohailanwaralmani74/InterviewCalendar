@@ -11,6 +11,4 @@ import com.calender.entities.ApplicationUser;
 public interface UserRepository extends JpaRepository<ApplicationUser, Long> {
 
 	Page<ApplicationUser> findAllByRole(String role, Pageable pageable);
-
-
 }

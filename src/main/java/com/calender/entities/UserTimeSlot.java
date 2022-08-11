@@ -1,7 +1,6 @@
 package com.calender.entities;
 
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,14 +27,18 @@ public class UserTimeSlot {
 	@Column(name = "ID", unique = true, nullable = false)
 	private Long id;
 	
-	@Column(name = "from_time")
-	private int fromTime;
+	@Column(name = "start_time")
+	private int startTime;
 	
-	@Column(name = "to_time")
-	private int toTime;
+	@Column(name = "end_time")
+	private int endTime;
 	
 	@Column(name = "on_date")
 	private Date onDate;
+	
+	@Column(name = "day")
+	private String day;
+	
 	@ManyToOne
 	private ApplicationUser user;
 

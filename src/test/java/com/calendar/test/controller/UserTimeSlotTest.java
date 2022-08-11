@@ -13,7 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.calender.entities.ApplicationUser;
 import com.calender.entities.UserTimeSlot;
 import com.calender.repositories.UserTimeSlotRepository;
-import com.calender.services.UserTimeSlotService;
+import com.calender.services.UserTimeSlotServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 class UserTimeSlotTest {
@@ -22,7 +22,7 @@ class UserTimeSlotTest {
 	private UserTimeSlotRepository repository;
 	
 	@InjectMocks
-	private UserTimeSlotService service;
+	private UserTimeSlotServiceImpl service;
 	
 	@Test
 	void testGetAvailableSlots() {

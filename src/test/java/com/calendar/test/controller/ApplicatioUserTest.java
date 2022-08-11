@@ -14,7 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.calender.entities.ApplicationUser;
 import com.calender.repositories.UserRepository;
-import com.calender.services.UserService;
+import com.calender.services.UserServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 class ApplicatioUserTest {
@@ -23,7 +23,7 @@ class ApplicatioUserTest {
 	private UserRepository userRepository;
 
 	@InjectMocks
-	private UserService userService;
+	private UserServiceImpl userService;
 	
 	public ApplicationUser getDto(){
 		ApplicationUser userDto = new ApplicationUser(1L, "Saeed", "INTERVIEWER");

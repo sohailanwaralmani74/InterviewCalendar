@@ -1,6 +1,6 @@
 package com.calender.dtos;
 
-import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -21,22 +21,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserTimeSlotDto {
+
 	@JsonProperty("id")
 	private Long id;
-	
-	@JsonProperty("fromTime")
+
+	@JsonProperty("startTime")
 	@Min(value = 9)
 	@Max(value = 16)
-	private int fromTime;
-	
-	@JsonProperty("toTime")
+	private int startTime;
+
+	@JsonProperty("endTime")
 	@Min(value = 10)
 	@Max(value = 16)
-	private int toTime;
-	
+	private int endTime;
+
 	@JsonProperty("onDate")
 	@NotNull
-	private Date onDate;
+	private List<WeekDays> weekDays;
+
 	@JsonProperty("user")
 	@NotNull
 	private UserDto user;

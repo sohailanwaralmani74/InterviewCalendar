@@ -2,16 +2,20 @@ package com.calender.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.calender.dtos.AvailableSlotsRequest;
 import com.calender.dtos.AvailableTimeSlot;
-import com.calender.dtos.UserTimeSlotDto;
+import com.calender.dtos.TimeSlotDTO;
+import com.calender.dtos.TimeSlotRequestDto;
 import com.calender.entities.ApplicationUser;
 import com.calender.entities.UserTimeSlot;
 import com.calender.exceptions.BusinessException;
+import com.calender.repositories.UserRepository;
 import com.calender.repositories.UserTimeSlotRepository;
 
 /**
@@ -27,9 +31,9 @@ import com.calender.repositories.UserTimeSlotRepository;
 
 @Service
 public class UserTimeSlotServiceImpl {
-	@Autowired
+
 	private UserTimeSlotRepository repository;
-	@Autowired
+	private UserRepository userRepository;
 	private ModelMapper mapper;
 
 	/**
@@ -43,6 +47,13 @@ public class UserTimeSlotServiceImpl {
 	 * @throws BusinessException
 	 * 
 	 */
+	
+	@Autowired
+	public UserTimeSlotServiceImpl(UserRepository userRepository, UserTimeSlotRepository repository, ModelMapper mapper) {
+		this.userRepository = userRepository;
+		this.repository = repository;
+		this.mapper = mapper;
+	}
 
 	public List<AvailableTimeSlot> getAvaialbleTimeSlots(AvailableSlotsRequest request) {
 		try {
@@ -60,7 +71,7 @@ public class UserTimeSlotServiceImpl {
 		}
 	}
 
-	public List<UserTimeSlot> addTimeSlot(List<UserTimeSlotDto> userTimeSlot) {
+	public List<UserTimeSlot> addTimeSlot(TimeSlotRequestDto userTimeSlot) {
 		try {
 			List<UserTimeSlot> timeSlotList = prepareSlotsForPersistance(userTimeSlot);
 			return repository.saveAll(timeSlotList);
@@ -95,8 +106,8 @@ public class UserTimeSlotServiceImpl {
 		List<AvailableTimeSlot> availableTimeSlots = new ArrayList<>();
 
 		AvailableTimeSlot availableTimeSlot = AvailableTimeSlot.builder()
-				.fromTime(slot.getStartTime())
-				.toTime(slot.getEndTime())
+				.startTime(slot.getStartTime())
+				.endTime(slot.getEndTime())
 				.onDate(slot.getOnDate())
 				.day(slot.getDay())
 				.candidate(slot.getUser())
@@ -116,19 +127,21 @@ public class UserTimeSlotServiceImpl {
 	/**
 	 * @Method prepareSlotsForPersistance
 	 * 
-	 *  private method
-	 * 
+	 * @param id 
 	 * @param UserTimeSlot
-	 * 
 	 *  set list of time slots in given time.
+	 *  
 	 *  @return slots
 	 * 
 	 */
 
-	private List<UserTimeSlot> prepareSlotsForPersistance(List<UserTimeSlotDto> userTimeSlotDtoList) {
+	private List<UserTimeSlot> prepareSlotsForPersistance(TimeSlotRequestDto timeSlotRequestDto) {
+		Optional<ApplicationUser> user = userRepository.findById(timeSlotRequestDto.getUser().getId());
+		if(!user.isPresent()) {
+			throw new BusinessException("404", "Failure", "User Not Found");
+		}
 		List<UserTimeSlot> slots = new ArrayList<>();
-
-		for (UserTimeSlotDto timeSlotDto : userTimeSlotDtoList) {
+		for (TimeSlotDTO timeSlotDto : timeSlotRequestDto.getTimeSLots()) {
 			int totalSlots = timeSlotDto.getEndTime() - timeSlotDto.getStartTime();
 			for (int j = 0; j < timeSlotDto.getWeekDays().size(); j++) {
 				for (int i = 0; i < totalSlots; i++) {
@@ -137,7 +150,7 @@ public class UserTimeSlotServiceImpl {
 							.endTime(timeSlotDto.getStartTime() + i + 1)
 							.onDate(timeSlotDto.getWeekDays().get(j).getOndate())
 							.day(timeSlotDto.getWeekDays().get(j).getDay())
-							.user(mapper.map(timeSlotDto.getUser(), ApplicationUser.class))
+							.user(mapper.map(timeSlotRequestDto.getUser(), ApplicationUser.class))
 							.build();
 					slots.add(timeSlot);
 				}

@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AvailableTimeSlot {
 
-	private int fromTime;
-	private int toTime;
+	private int startTime;
+	private int endTime;
 	private Date onDate;
 	private String day;
 	private ApplicationUser candidate;

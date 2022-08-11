@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.calender.dtos.UserDto;
 import com.calender.services.UserServiceImpl;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author sohail anwar
  * 
@@ -38,10 +40,16 @@ import com.calender.services.UserServiceImpl;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
 public class UserController {
 
-	@Autowired
+	
 	private UserServiceImpl userService;
+	
+	@Autowired
+	public UserController(UserServiceImpl userService) {
+		this.userService =userService;
+	}
 
 	@GetMapping
 	public ResponseEntity<?> getAllusers(@Pattern(regexp = "INTERVIEWER|CANDIDATE") @RequestParam String role,

@@ -1,7 +1,5 @@
 package com.calender.controllers;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.calender.dtos.AvailableSlotsRequest;
-import com.calender.dtos.UserTimeSlotDto;
+import com.calender.dtos.TimeSlotRequestDto;
 import com.calender.services.UserTimeSlotServiceImpl;
 
 /**
@@ -26,18 +24,20 @@ import com.calender.services.UserTimeSlotServiceImpl;
  * 
  *         find all time slots including interviewers and candidates, find all
  *         available time slots with candidate and interviewers ids. add time
- *         slot for user update time slot delete time slot.
- * 
- * 
- * 
+ *         slot for user update time slot delete time slot. 
  */
 
 @RestController
 @RequestMapping("/api/v1/interviewSlots")
 public class UserTimeSlotController {
 	
-	@Autowired
+
 	private UserTimeSlotServiceImpl timeSlotService;
+	
+	@Autowired
+	public UserTimeSlotController(UserTimeSlotServiceImpl timeSlotService) {
+		this.timeSlotService = timeSlotService;
+	}
 
 	@PostMapping("/availableSlots")
 	public ResponseEntity<?> getAvailableSlots(@Valid @RequestBody AvailableSlotsRequest request) {
@@ -45,7 +45,7 @@ public class UserTimeSlotController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> addTimeSlot(@Valid @RequestBody List<UserTimeSlotDto> userTimeSlot) {
+	public ResponseEntity<?> addTimeSlot(@Valid @RequestBody TimeSlotRequestDto userTimeSlot) {
 		return new ResponseEntity<>(timeSlotService.addTimeSlot(userTimeSlot), HttpStatus.CREATED);
 	}
 

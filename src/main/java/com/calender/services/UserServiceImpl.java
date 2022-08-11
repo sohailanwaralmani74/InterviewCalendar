@@ -19,10 +19,16 @@ import com.calender.repositories.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService{
-	@Autowired
+	
 	private UserRepository userRepository;
-	@Autowired
 	private ModelMapper mapper;
+	
+	@Autowired
+	public UserServiceImpl(UserRepository userRepository, ModelMapper mapper) {
+		this.userRepository = userRepository;
+		this.mapper = mapper;
+		
+	}
 
 	public List<UserDto> getAllUsers(String role, Integer pageNo, Integer pageSize) {
 		List<UserDto> usersList = new ArrayList<>();

@@ -26,8 +26,7 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, ModelMapper mapper) {
 		this.userRepository = userRepository;
-		this.mapper = mapper;
-		
+		this.mapper = mapper;	
 	}
 	public List<UserDto> getAllUsers(String role, Integer pageNo, Integer pageSize) {
 		List<UserDto> usersList = new ArrayList<>();

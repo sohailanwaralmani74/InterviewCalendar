@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.calender.dtos.UserDto;
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService{
 					.collect(Collectors.toList());		
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new BusinessException("au-0001", "FAILURE", "Error while Fetching user");
+			throw new BusinessException("au-0001", "Error while Fetching user", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return usersList;
 	}
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService{
 			user = userRepository.save(user);
 			return user;	
 		} catch (Exception e) {
-			throw new BusinessException("au-002", "FAILURE", "Error while saving user");
+			throw new BusinessException("au-001", "Error while saving user", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	public ApplicationUser updateUser(UserDto userDto, long id) {
@@ -59,14 +60,14 @@ public class UserServiceImpl implements UserService{
 			user = userRepository.save(user);
 			return user;	
 		} catch (Exception e) {
-			throw new BusinessException("au-003", "FAILURE", "User does not exists with id:" + id);
+			throw new BusinessException("au-003", "User does not exists with id:" + id, HttpStatus.NOT_FOUND);
 		}
 	}
 	public void deleteUser(long id) {
 		try {
 			userRepository.deleteById(id);	
 		} catch (Exception e) {
-			throw new BusinessException("au-004", "FAILURE", "User Not Found");
+			throw new BusinessException("au-003", "User does not exists with id:" + id, HttpStatus.NOT_FOUND);
 		}
 	}
 	public UserDto findById(long id) {
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserService{
 			UserDto userDto = mapper.map(user.get(), UserDto.class);
 			return userDto;
 		} catch (Exception e) {
-			throw new BusinessException("au-005", "FAILURE", "User Not Found");
+			throw new BusinessException("au-003", "User does not exists with id:" + id, HttpStatus.NOT_FOUND);
 		}
 	}
 }
